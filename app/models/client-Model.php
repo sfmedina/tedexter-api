@@ -2,7 +2,7 @@
 <?php
 require_once './config.php';
 
-class userModel {
+class clientModel {
     private $db;
 
     public function __construct() {

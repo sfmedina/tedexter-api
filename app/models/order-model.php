@@ -3,7 +3,7 @@ require_once './config.php';
 
 class orderModel
 {
-    private $db;
+    public $db;
 
     public function __construct()
     {
@@ -13,7 +13,7 @@ class orderModel
 
 
 
-    public function showOrders()
+    public function getOrders()
     {      
 
         $query = $this->db->prepare('SELECT * FROM `command`');
@@ -24,7 +24,7 @@ class orderModel
         return $commands;
     }
 
-    public function showOrderById($id)
+    public function getOrderById($id)
     {
 
         //SELECT * FROM `order` WHERE 
@@ -49,18 +49,49 @@ class orderModel
     }
     
     
-    public function createCommand($date, $status, $id_client)
+    public function createOrder($date, $status, $id_client)
     {
 
         $query = $this->db->prepare("INSERT INTO command(date, status, id_client) VALUES (?,?,?)");
         $query->execute([$date, $status, $id_client]);
-      
+        
+
+        return $this->db->lastInsertId();
         
     }
 
-    public function updateCommand($id_order, $date, $status, $id_client)
+    public function updateOrder($id_order, $date, $status, $id_client)
     {
         $query = $this->db->prepare("UPDATE command SET date = ?, status = ?, id_client = ? WHERE id_order = ?");
         $query->execute([$date, $status, $id_client, $id_order]);  
+    }
+
+    public function getByStatus($status)
+    {
+        $query = $this->db->prepare('SELECT * FROM `command` WHERE `status` LIKE ? ORDER BY `id_order` ASC');
+        $query->execute([$status]);
+
+        $commands = $query->fetchAll(PDO::FETCH_OBJ);
+
+        return $commands;
+    }
+
+    public function getOrdersByDateAsc()
+    {
+        $query = $this->db->prepare('SELECT * FROM `command` ORDER BY `date` ASC');
+        $query->execute();
+
+        $commands = $query->fetchAll(PDO::FETCH_OBJ);
+
+        return $commands;
+    }
+    public function getOrdersByDateDesc()
+    {
+        $query = $this->db->prepare('SELECT * FROM `command` ORDER BY `date` DESC');
+        $query->execute();
+
+        $commands = $query->fetchAll(PDO::FETCH_OBJ);
+
+        return $commands;
     }
 }

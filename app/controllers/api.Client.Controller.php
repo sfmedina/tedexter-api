@@ -1,12 +1,15 @@
 <?php   
+
+require_once './app/models/client-Model.php';
+require_once './app/views/json.view.php';
 class ClientApiController {
 
     private $view;
     private $model;
 
-        public function __construct($res) { 
+        function __construct() { 
             $this->view = new JSONview();
-            $this->model = new userModel();
+            $this->model = new clientModel();
         }
 
 
@@ -21,6 +24,10 @@ class ClientApiController {
         $id = $req->params->id;
         //obtengo el cliente del modelo
         $client = $this->model->getClientById($id);
+
+        if(!$client){
+            return $this->view->response("El cliente con el id=$id no existe", 404);
+        }
 
         return $this->view->response($client);
         
