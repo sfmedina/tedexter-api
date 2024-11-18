@@ -20,28 +20,40 @@ class OrderApiController
 
 
     public function getOrders($req, $res)
-    {
-        $orders = [];
+    {           
+        
+        //obtengo todos los pedidos por estado
+            $orders= [];
 
-        if (isset($req->query->status) && $req->query->status == "entregado") {
-            $orders = $this->model->getByStatus($req->query->status);
-            //obtengo los clientes del modelo
+            if (isset($req->query->status) && $req->query->status == "entregado") {
+                $orders = $this->model->getByStatus($req->query->status);                
+    
+            } else if (isset($req->query->status) && $req->query->status == "pendiente") {
+                $orders = $this->model->getByStatus($req->query->status);
+            } else if (isset($req->query->status) && $req->query->status == "en camino") {
+                $orders = $this->model->getByStatus($req->query->status);
+            } else if (isset($req->query->status) && $req->query->status == "en preparacion") {
+                $orders = $this->model->getByStatus($req->query->status);
 
-        } else if (isset($req->query->status) && $req->query->status == "pendiente") {
-            $orders = $this->model->getByStatus($req->query->status);
-        } else if (isset($req->query->status) && $req->query->status == "en camino") {
-            $orders = $this->model->getByStatus($req->query->status);
-        } else if (isset($req->query->status) && $req->query->status == "en preparacion") {
-            $orders = $this->model->getByStatus($req->query->status);
-        } else {
-            $orders = $this->model->getOrders();
         }
-
+        else{
+            $orders = $this->model->getOrders();
+            
+        }
+        return $this->view->response($orders);
+    }
+        public function getOrdersByDate($req,$res){
+//obtener todos los datos ordeanados por fecha  en forma ascedente o descendente 
         if (isset($req->query->date) && $req->query->date == "ASC") {
             $orders = $this->model->getOrdersByDateAsc();
         }
         if (isset($req->query->date) && $req->query->date == "DESC") {
             $orders = $this->model->getOrdersByDateDesc();
+        }
+        //se establece por defecto que si no recibe un parametro de ordenamiento el mismo sea Ascendente 
+        if(isset($req->query->date)){
+            $orders = $this->model->getOrdersByDateAsc();           
+
         }
 
         return $this->view->response($orders);
@@ -60,7 +72,14 @@ class OrderApiController
 
         if (!$order) {
             return $this->view->response("El Pedido con el id=$id no existe", 404);
-        }
+        }   
+        
+            
+        
+
+
+            
+        
 
         return $this->view->response($order);
     }
